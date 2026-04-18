@@ -1,0 +1,203 @@
+/* ===== App Layout ===== */
+.app { display: flex; flex-direction: column; min-height: 100vh; }
+
+.header {
+  text-align: center;
+  padding: 2rem 1rem 1.2rem;
+  background: linear-gradient(135deg, var(--surface), var(--card));
+  border-bottom: 2px solid var(--accent);
+}
+.header h1 { font-size: 1.6rem; font-weight: 700; letter-spacing: .3px; }
+.subtitle   { color: var(--text-dim); font-size: .9rem; margin-top: .3rem; }
+
+.container { max-width: 1100px; margin: 0 auto; padding: 1.5rem 1rem; flex: 1; }
+.section   { margin-bottom: 2rem; }
+.section-title {
+  font-size: 1rem; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 1px; color: var(--text-dim);
+  margin-bottom: 1rem; text-align: center;
+}
+
+.footer {
+  text-align: center; padding: 1rem;
+  color: var(--text-dim); font-size: .8rem;
+  border-top: 1px solid rgba(255,255,255,.06);
+}
+
+.error-banner {
+  background: rgba(233,69,96,.15);
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  border-radius: var(--radius);
+  padding: .75rem 1rem;
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+/* ===== Model Cards Grid ===== */
+.model-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: .75rem;
+}
+.model-card {
+  background: var(--card);
+  border: 2px solid transparent;
+  border-radius: var(--radius);
+  padding: 1.1rem .6rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all .2s;
+  display: flex; flex-direction: column; align-items: center; gap: .5rem;
+}
+.model-card:hover { border-color: var(--accent2); transform: translateY(-2px); }
+.model-card.selected {
+  border-color: var(--accent);
+  background: var(--card-sel);
+  box-shadow: 0 0 16px rgba(233,69,96,.3);
+}
+.model-card .icon { font-size: 2rem; }
+.model-card .name { font-size: .82rem; font-weight: 600; }
+.model-card .exp-badge {
+  font-size: .65rem; padding: .15rem .45rem;
+  border-radius: 999px; background: rgba(255,255,255,.1);
+  color: var(--text-dim);
+}
+
+/* Skeleton loading for model cards */
+.model-card.skeleton {
+  pointer-events: none;
+  cursor: default;
+}
+@keyframes pulse {
+  0%, 100% { opacity: .25; }
+  50%      { opacity: .5; }
+}
+.skeleton-icon {
+  display: block; width: 2rem; height: 2rem;
+  border-radius: 6px; background: rgba(255,255,255,.12);
+  animation: pulse 1.4s ease-in-out infinite;
+}
+.skeleton-text {
+  display: block; width: 70%; height: .85rem;
+  border-radius: 4px; background: rgba(255,255,255,.12);
+  animation: pulse 1.4s ease-in-out infinite .15s;
+}
+.skeleton-badge {
+  display: block; width: 40%; height: .65rem;
+  border-radius: 999px; background: rgba(255,255,255,.08);
+  animation: pulse 1.4s ease-in-out infinite .3s;
+}
+.models-error {
+  text-align: center; padding: 2rem;
+  color: var(--accent); font-weight: 600;
+}
+
+/* ===== Metrics Gauges ===== */
+.metrics-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 1rem;
+}
+.gauge-card {
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 1.2rem .5rem 1rem;
+  text-align: center;
+  box-shadow: var(--shadow);
+}
+.gauge-label {
+  display: block; font-size: .8rem; font-weight: 600;
+  text-transform: uppercase; letter-spacing: .5px;
+  color: var(--text-dim); margin-bottom: .6rem;
+}
+.gauge-ring { position: relative; width: 110px; height: 110px; margin: 0 auto; }
+.gauge-ring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+.gauge-bg  { fill: none; stroke: var(--ring-bg); stroke-width: 10; }
+.gauge-fg  {
+  fill: none; stroke: var(--accent); stroke-width: 10;
+  stroke-linecap: round; transition: stroke-dashoffset .8s ease, stroke .3s;
+}
+.gauge-value {
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 1.15rem; font-weight: 700;
+}
+
+/* ===== Predict Section ===== */
+.predict-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 1.5rem; align-items: start;
+}
+@media (max-width: 700px) { .predict-grid { grid-template-columns: 1fr; } }
+
+.upload-area {
+  background: var(--surface);
+  border: 2px dashed var(--text-dim);
+  border-radius: var(--radius);
+  min-height: 280px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: border-color .2s;
+  overflow: hidden; position: relative;
+}
+.upload-area:hover, .upload-area.drag-over { border-color: var(--accent2); }
+.upload-placeholder {
+  text-align: center; color: var(--text-dim); padding: 2rem;
+}
+.upload-placeholder svg { margin-bottom: .5rem; opacity: .6; }
+.upload-placeholder .link { color: var(--accent2); text-decoration: underline; cursor: pointer; }
+.image-preview {
+  max-width: 100%; max-height: 340px; object-fit: contain; border-radius: 8px;
+}
+
+.controls-panel { display: flex; flex-direction: column; gap: 1rem; }
+.btn {
+  padding: .75rem 1.5rem; border: none; border-radius: var(--radius);
+  font-size: .95rem; font-weight: 600; cursor: pointer; transition: all .2s;
+  display: flex; align-items: center; justify-content: center; gap: .5rem;
+}
+.btn:disabled { opacity: .45; cursor: not-allowed; }
+.btn-primary  { background: var(--accent); color: #fff; }
+.btn-primary:hover:not(:disabled) { background: #c73a52; }
+.btn-secondary { background: var(--card); color: var(--text); border: 1px solid var(--text-dim); }
+.btn-secondary:hover { background: var(--surface); }
+
+.spinner {
+  width: 18px; height: 18px;
+  border: 3px solid rgba(255,255,255,.3);
+  border-top-color: #fff; border-radius: 50%;
+  animation: spin .6s linear infinite; display: inline-block;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ===== Result Card ===== */
+.result-card {
+  background: var(--surface); border-radius: var(--radius);
+  padding: 1.2rem; box-shadow: var(--shadow);
+  animation: fadeIn .4s;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.result-card h3 { font-size: 1rem; margin-bottom: .8rem; color: var(--accent2); }
+.result-row {
+  display: flex; justify-content: space-between;
+  padding: .35rem 0; border-bottom: 1px solid rgba(255,255,255,.06);
+}
+.result-label { color: var(--text-dim); font-size: .85rem; }
+.result-value { font-weight: 600; font-size: .9rem; }
+.result-class.Normal    { color: var(--green); }
+.result-class.Pneumonia { color: var(--accent); }
+
+.result-probs { margin-top: .8rem; }
+.prob-bar-wrap {
+  display: grid; grid-template-columns: 80px 1fr 50px;
+  align-items: center; gap: .5rem; margin-bottom: .4rem;
+}
+.prob-label { font-size: .8rem; color: var(--text-dim); }
+.prob-bar { height: 10px; background: var(--ring-bg); border-radius: 99px; overflow: hidden; }
+.prob-fill { height: 100%; border-radius: 99px; transition: width .6s ease; }
+.prob-fill.normal    { background: var(--green); }
+.prob-fill.pneumonia { background: var(--accent); }
+.prob-val { font-size: .8rem; font-weight: 600; text-align: right; }
