@@ -1,9 +1,9 @@
 const CIRCUMFERENCE = 2 * Math.PI * 52; // r = 52
 
 function gaugeColor(val) {
-  if (val >= 0.8) return '#22c55e';
-  if (val >= 0.6) return '#f59e0b';
-  return '#e94560';
+  if (val >= 0.8) return '#8fb87a';
+  if (val >= 0.6) return '#d4a85c';
+  return '#c9908a';
 }
 
 function Gauge({ label, value }) {

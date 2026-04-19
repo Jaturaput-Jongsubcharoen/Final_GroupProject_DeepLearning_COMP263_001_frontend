@@ -2,19 +2,19 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --bg:        #1a1a2e;
-  --surface:   #16213e;
-  --card:      #0f3460;
-  --card-sel:  #533483;
-  --accent:    #e94560;
-  --accent2:   #0ea5e9;
-  --text:      #e0e0e0;
-  --text-dim:  #94a3b8;
-  --green:     #22c55e;
-  --orange:    #f59e0b;
-  --ring-bg:   #2d2d4e;
-  --radius:    12px;
-  --shadow:    0 4px 24px rgba(0,0,0,.35);
+  --bg:        #3a302b;
+  --surface:   #4a3f38;
+  --card:      #5a4d44;
+  --card-sel:  #6b5a50;
+  --accent:    #c9908a;
+  --accent2:   #d4b896;
+  --text:      #f5f0e8;
+  --text-dim:  #b8a99a;
+  --green:     #8fb87a;
+  --orange:    #d4a85c;
+  --ring-bg:   #4a3f38;
+  --radius:    10px;
+  --shadow:    0 4px 24px rgba(0,0,0,.3);
 }
 
 html { font-size: 16px; }
