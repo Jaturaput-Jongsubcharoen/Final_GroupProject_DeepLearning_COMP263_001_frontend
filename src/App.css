@@ -37,18 +37,18 @@
 /* ===== Model Cards Grid ===== */
 .model-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  grid-template-columns: repeat(3, 1fr);
   gap: .75rem;
 }
 .model-card {
   background: var(--card);
   border: 2px solid transparent;
   border-radius: var(--radius);
-  padding: 1.1rem .6rem;
+  padding: 1.2rem .8rem;
   text-align: center;
   cursor: pointer;
   transition: all .2s;
-  display: flex; flex-direction: column; align-items: center; gap: .5rem;
+  display: flex; flex-direction: column; align-items: center; gap: .45rem;
 }
 .model-card:hover { border-color: var(--accent2); transform: translateY(-2px); }
 .model-card.selected {
@@ -56,10 +56,9 @@
   background: var(--card-sel);
   box-shadow: 0 0 16px rgba(233,69,96,.3);
 }
-.model-card .icon { font-size: 2rem; }
-.model-card .name { font-size: .82rem; font-weight: 600; }
+.model-card .name { font-size: .85rem; font-weight: 600; }
 .model-card .exp-badge {
-  font-size: .65rem; padding: .15rem .45rem;
+  font-size: .65rem; padding: .15rem .5rem;
   border-radius: 999px; background: rgba(255,255,255,.1);
   color: var(--text-dim);
 }
@@ -72,11 +71,6 @@
 @keyframes pulse {
   0%, 100% { opacity: .25; }
   50%      { opacity: .5; }
-}
-.skeleton-icon {
-  display: block; width: 2rem; height: 2rem;
-  border-radius: 6px; background: rgba(255,255,255,.12);
-  animation: pulse 1.4s ease-in-out infinite;
 }
 .skeleton-text {
   display: block; width: 70%; height: .85rem;
@@ -201,3 +195,21 @@
 .prob-fill.normal    { background: var(--green); }
 .prob-fill.pneumonia { background: var(--accent); }
 .prob-val { font-size: .8rem; font-weight: 600; text-align: right; }
+
+/* ===== Responsive ===== */
+@media (max-width: 900px) {
+  .model-grid { grid-template-columns: repeat(2, 1fr); }
+  .metrics-row { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 500px) {
+  .header h1 { font-size: 1.2rem; }
+  .container { padding: 1rem .75rem; }
+  .model-grid { grid-template-columns: repeat(2, 1fr); gap: .5rem; }
+  .model-card { padding: .9rem .5rem; }
+  .model-card .name { font-size: .78rem; }
+  .metrics-row { grid-template-columns: repeat(2, 1fr); gap: .75rem; }
+  .gauge-ring { width: 90px; height: 90px; }
+  .gauge-value { font-size: 1rem; }
+  .predict-grid { gap: 1rem; }
+  .upload-area { min-height: 200px; }
+}
