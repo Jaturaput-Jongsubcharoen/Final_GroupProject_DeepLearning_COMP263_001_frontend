@@ -1,3 +1,9 @@
+const EXP_LABELS = {
+  1: 'Supervised Learning',
+  2: 'Unsupervised Learning',
+  3: 'State-of-the-Art Models',
+};
+
 function ModelSelector({ models, loading, error, selected, onSelect }) {
   if (loading) {
     return (
@@ -5,6 +11,7 @@ function ModelSelector({ models, loading, error, selected, onSelect }) {
         {[...Array(6)].map((_, i) => (
           <div key={i} className="model-card skeleton">
             <span className="name skeleton-text" />
+            <span className="exp-type skeleton-badge" />
             <span className="exp-badge skeleton-badge" />
           </div>
         ))}
@@ -29,7 +36,8 @@ function ModelSelector({ models, loading, error, selected, onSelect }) {
           onClick={() => onSelect(m.name)}
         >
           <span className="name">{m.name}</span>
-          <span className="exp-badge">Exp {m.experiment}</span>
+          <span className="exp-type">{EXP_LABELS[m.experiment]}</span>
+          <span className="exp-badge">Experiment {m.experiment}</span>
         </div>
       ))}
     </div>

@@ -58,6 +58,9 @@
   box-shadow: 0 0 16px rgba(201,144,138,.35);
 }
 .model-card .name { font-size: .85rem; font-weight: 600; }
+.model-card .exp-type {
+  font-size: .7rem; color: var(--accent2); font-weight: 500;
+}
 .model-card .exp-badge {
   font-size: .65rem; padding: .15rem .5rem;
   border-radius: 999px; background: rgba(255,255,255,.1);
