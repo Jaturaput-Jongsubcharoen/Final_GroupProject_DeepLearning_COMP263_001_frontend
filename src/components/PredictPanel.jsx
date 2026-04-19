@@ -1,10 +1,30 @@
 import { useState, useRef, useCallback } from 'react';
 
+const collectImageUrls = (globMap) => Object.values(globMap).sort();
+
+const normalImages = [
+  ...collectImageUrls(import.meta.glob('/public/examples/test/NORMAL/*.{jpg,jpeg,png,webp,JPG,JPEG,PNG,WEBP}', { eager: true, import: 'default' })),
+  ...collectImageUrls(import.meta.glob('/public/test/NORMAL/*.{jpg,jpeg,png,webp,JPG,JPEG,PNG,WEBP}', { eager: true, import: 'default' })),
+];
+
+const pneumoniaImages = [
+  ...collectImageUrls(import.meta.glob('/public/examples/test/PNEUMONIA/*.{jpg,jpeg,png,webp,JPG,JPEG,PNG,WEBP}', { eager: true, import: 'default' })),
+  ...collectImageUrls(import.meta.glob('/public/test/PNEUMONIA/*.{jpg,jpeg,png,webp,JPG,JPEG,PNG,WEBP}', { eager: true, import: 'default' })),
+];
+
 const SAMPLES = [
-  { id: 'normal1',    label: 'NORMAL',    name: 'Example 1', src: '/examples/test/NORMAL/IM-0013-0001.jpeg' },
-  { id: 'normal2',    label: 'NORMAL',    name: 'Example 2', src: '/examples/test/NORMAL/NORMAL2-IM-0374-0001.jpeg' },
-  { id: 'pneumonia1', label: 'PNEUMONIA', name: 'Example 3', src: '/examples/test/PNEUMONIA/person128_bacteria_608.jpeg' },
-  { id: 'pneumonia2', label: 'PNEUMONIA', name: 'Example 4', src: '/examples/test/PNEUMONIA/person38_virus_83.jpeg' },
+  ...normalImages.slice(0, 2).map((src, i) => ({
+    id: `normal${i + 1}`,
+    label: 'NORMAL',
+    name: `Example ${i + 1}`,
+    src,
+  })),
+  ...pneumoniaImages.slice(0, 2).map((src, i) => ({
+    id: `pneumonia${i + 1}`,
+    label: 'PNEUMONIA',
+    name: `Example ${i + 3}`,
+    src,
+  })),
 ];
 
 function PredictPanel({ selectedModel, onPredict }) {
@@ -180,21 +200,25 @@ function PredictPanel({ selectedModel, onPredict }) {
         <p className="sample-hint">
           Don't have a chest X-ray image? Try one of the sample test images below to see how the models perform.
         </p>
-        <div className="sample-grid">
-          {SAMPLES.map(s => (
-            <div
-              key={s.id}
-              className={`sample-card${activeSample === s.id ? ' active' : ''}`}
-              onClick={() => handleSample(s)}
-            >
-              <img src={s.src} alt={s.name} className="sample-thumb" />
-              <span className="sample-name">{s.name}</span>
-              <span className={`sample-label ${s.label === 'NORMAL' ? 'normal' : 'pneumonia'}`}>
-                Correct label: {s.label}
-              </span>
-            </div>
-          ))}
-        </div>
+        {SAMPLES.length === 0 ? (
+          <div className="models-error">No sample images found in public/examples/test or public/test.</div>
+        ) : (
+          <div className="sample-grid">
+            {SAMPLES.map(s => (
+              <div
+                key={s.id}
+                className={`sample-card${activeSample === s.id ? ' active' : ''}`}
+                onClick={() => handleSample(s)}
+              >
+                <img src={s.src} alt={s.name} className="sample-thumb" />
+                <span className="sample-name">{s.name}</span>
+                <span className={`sample-label ${s.label === 'NORMAL' ? 'normal' : 'pneumonia'}`}>
+                  Correct label: {s.label}
+                </span>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </>
   );
