@@ -200,10 +200,57 @@
 .prob-fill.pneumonia { background: var(--accent); }
 .prob-val { font-size: .8rem; font-weight: 600; text-align: right; }
 
+/* ===== Expected Label ===== */
+.expected-label {
+  text-align: center; padding: .5rem .75rem;
+  border-radius: var(--radius); font-size: .85rem;
+}
+.expected-label.normal    { background: rgba(143,184,122,.15); color: var(--green); }
+.expected-label.pneumonia { background: rgba(201,144,138,.15); color: var(--accent); }
+
+/* ===== Sample Images ===== */
+.sample-section { margin-top: 1.5rem; }
+.sample-hint {
+  text-align: center; color: var(--text-dim); font-size: .85rem;
+  margin-bottom: 1rem;
+}
+.sample-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: .75rem;
+}
+.sample-card {
+  background: var(--surface);
+  border: 2px solid transparent;
+  border-radius: var(--radius);
+  padding: .6rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all .2s;
+  display: flex; flex-direction: column; align-items: center; gap: .4rem;
+}
+.sample-card:hover { border-color: var(--accent2); transform: translateY(-2px); }
+.sample-card.active {
+  border-color: var(--accent);
+  box-shadow: 0 0 12px rgba(201,144,138,.3);
+}
+.sample-thumb {
+  width: 100%; aspect-ratio: 1/1; object-fit: cover;
+  border-radius: 6px; background: #333;
+}
+.sample-name { font-size: .78rem; font-weight: 600; }
+.sample-label {
+  font-size: .65rem; padding: .15rem .5rem;
+  border-radius: 999px; font-weight: 600;
+}
+.sample-label.normal    { background: rgba(143,184,122,.18); color: var(--green); }
+.sample-label.pneumonia { background: rgba(201,144,138,.18); color: var(--accent); }
+
 /* ===== Responsive ===== */
 @media (max-width: 900px) {
   .model-grid { grid-template-columns: repeat(2, 1fr); }
   .metrics-row { grid-template-columns: repeat(2, 1fr); }
+  .sample-grid { grid-template-columns: repeat(2, 1fr); }
 }
 @media (max-width: 500px) {
   .header h1 { font-size: 1.2rem; }
@@ -216,4 +263,5 @@
   .gauge-value { font-size: 1rem; }
   .predict-grid { gap: 1rem; }
   .upload-area { min-height: 200px; }
+  .sample-grid { grid-template-columns: repeat(2, 1fr); gap: .5rem; }
 }

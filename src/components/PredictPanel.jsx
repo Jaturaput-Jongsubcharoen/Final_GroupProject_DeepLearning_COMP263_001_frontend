@@ -1,11 +1,20 @@
 import { useState, useRef, useCallback } from 'react';
 
+const SAMPLES = [
+  { id: 'normal1',    label: 'NORMAL',    name: 'Example 1', src: '/examples/test/NORMAL/IM-0013-0001.jpeg' },
+  { id: 'normal2',    label: 'NORMAL',    name: 'Example 2', src: '/examples/test/NORMAL/NORMAL2-IM-0374-0001.jpeg' },
+  { id: 'pneumonia1', label: 'PNEUMONIA', name: 'Example 3', src: '/examples/test/PNEUMONIA/person128_bacteria_608.jpeg' },
+  { id: 'pneumonia2', label: 'PNEUMONIA', name: 'Example 4', src: '/examples/test/PNEUMONIA/person38_virus_83.jpeg' },
+];
+
 function PredictPanel({ selectedModel, onPredict }) {
   const [file, setFile] = useState(null);
   const [preview, setPreview] = useState(null);
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
   const [dragOver, setDragOver] = useState(false);
+  const [expectedLabel, setExpectedLabel] = useState(null);
+  const [activeSample, setActiveSample] = useState(null);
   const inputRef = useRef(null);
 
   const handleFile = useCallback((f) => {
@@ -13,6 +22,23 @@ function PredictPanel({ selectedModel, onPredict }) {
     setFile(f);
     setPreview(URL.createObjectURL(f));
     setResult(null);
+    setExpectedLabel(null);
+    setActiveSample(null);
+  }, []);
+
+  const handleSample = useCallback(async (sample) => {
+    setActiveSample(sample.id);
+    setExpectedLabel(sample.label);
+    setResult(null);
+    setPreview(sample.src);
+    try {
+      const res = await fetch(sample.src);
+      const blob = await res.blob();
+      const f = new File([blob], sample.src.split('/').pop(), { type: blob.type });
+      setFile(f);
+    } catch {
+      setFile(null);
+    }
   }, []);
 
   const handleDrop = useCallback((e) => {
@@ -25,6 +51,8 @@ function PredictPanel({ selectedModel, onPredict }) {
     setFile(null);
     setPreview(null);
     setResult(null);
+    setExpectedLabel(null);
+    setActiveSample(null);
     if (inputRef.current) inputRef.current.value = '';
   };
 
@@ -46,99 +74,129 @@ function PredictPanel({ selectedModel, onPredict }) {
   const pPneu = result?.probabilities?.Pneumonia ?? 0;
 
   return (
-    <div className="predict-grid">
-      {/* Upload area */}
-      <div
-        className={`upload-area${dragOver ? ' drag-over' : ''}`}
-        onClick={() => inputRef.current?.click()}
-        onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
-        onDragLeave={() => setDragOver(false)}
-        onDrop={handleDrop}
-      >
-        <input
-          ref={inputRef}
-          type="file"
-          accept="image/*"
-          hidden
-          onChange={(e) => e.target.files.length && handleFile(e.target.files[0])}
-        />
-        {preview ? (
-          <img src={preview} className="image-preview" alt="Preview" />
-        ) : (
-          <div className="upload-placeholder">
-            <svg width="48" height="48" viewBox="0 0 24 24" fill="none"
-              stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-              <polyline points="17 8 12 3 7 8" />
-              <line x1="12" y1="3" x2="12" y2="15" />
-            </svg>
-            <p>Drag &amp; drop a chest X-ray image<br />or <span className="link">browse files</span></p>
-          </div>
-        )}
-      </div>
-
-      {/* Controls + Result */}
-      <div className="controls-panel">
-        <button
-          className="btn btn-primary"
-          disabled={!selectedModel || !file || loading}
-          onClick={handlePredict}
+    <>
+      <div className="predict-grid">
+        {/* Upload area */}
+        <div
+          className={`upload-area${dragOver ? ' drag-over' : ''}`}
+          onClick={() => inputRef.current?.click()}
+          onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
+          onDragLeave={() => setDragOver(false)}
+          onDrop={handleDrop}
         >
-          {loading ? (
-            <><span className="spinner" /> Predicting…</>
+          <input
+            ref={inputRef}
+            type="file"
+            accept="image/*"
+            hidden
+            onChange={(e) => e.target.files.length && handleFile(e.target.files[0])}
+          />
+          {preview ? (
+            <img src={preview} className="image-preview" alt="Preview" />
           ) : (
-            'Predict'
+            <div className="upload-placeholder">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                <polyline points="17 8 12 3 7 8" />
+                <line x1="12" y1="3" x2="12" y2="15" />
+              </svg>
+              <p>Drag &amp; drop a chest X-ray image<br />or <span className="link">browse files</span></p>
+            </div>
           )}
-        </button>
+        </div>
 
-        <button className="btn btn-secondary" onClick={handleClear}>
-          Clear
-        </button>
+        {/* Controls + Result */}
+        <div className="controls-panel">
+          {expectedLabel && (
+            <div className={`expected-label ${expectedLabel === 'NORMAL' ? 'normal' : 'pneumonia'}`}>
+              Expected result: <strong>{expectedLabel}</strong>
+            </div>
+          )}
 
-        {result && !result.error && (
-          <div className="result-card">
-            <h3>Prediction Result</h3>
-            <div className="result-row">
-              <span className="result-label">Model:</span>
-              <span className="result-value">{result.model}</span>
-            </div>
-            <div className="result-row">
-              <span className="result-label">Class:</span>
-              <span className={`result-value result-class ${result.predicted_class}`}>
-                {result.predicted_class}
-              </span>
-            </div>
-            <div className="result-row">
-              <span className="result-label">Confidence:</span>
-              <span className="result-value">
-                {(result.confidence * 100).toFixed(2)}%
-              </span>
-            </div>
+          <button
+            className="btn btn-primary"
+            disabled={!selectedModel || !file || loading}
+            onClick={handlePredict}
+          >
+            {loading ? (
+              <><span className="spinner" /> Predicting…</>
+            ) : (
+              'Predict'
+            )}
+          </button>
 
-            <div className="result-probs">
-              <div className="prob-bar-wrap">
-                <span className="prob-label">Normal</span>
-                <div className="prob-bar">
-                  <div className="prob-fill normal" style={{ width: `${pNorm * 100}%` }} />
-                </div>
-                <span className="prob-val">{(pNorm * 100).toFixed(1)}%</span>
+          <button className="btn btn-secondary" onClick={handleClear}>
+            Clear
+          </button>
+
+          {result && !result.error && (
+            <div className="result-card">
+              <h3>Prediction Result</h3>
+              <div className="result-row">
+                <span className="result-label">Model:</span>
+                <span className="result-value">{result.model}</span>
               </div>
-              <div className="prob-bar-wrap">
-                <span className="prob-label">Pneumonia</span>
-                <div className="prob-bar">
-                  <div className="prob-fill pneumonia" style={{ width: `${pPneu * 100}%` }} />
+              <div className="result-row">
+                <span className="result-label">Class:</span>
+                <span className={`result-value result-class ${result.predicted_class}`}>
+                  {result.predicted_class}
+                </span>
+              </div>
+              <div className="result-row">
+                <span className="result-label">Confidence:</span>
+                <span className="result-value">
+                  {(result.confidence * 100).toFixed(2)}%
+                </span>
+              </div>
+
+              <div className="result-probs">
+                <div className="prob-bar-wrap">
+                  <span className="prob-label">Normal</span>
+                  <div className="prob-bar">
+                    <div className="prob-fill normal" style={{ width: `${pNorm * 100}%` }} />
+                  </div>
+                  <span className="prob-val">{(pNorm * 100).toFixed(1)}%</span>
                 </div>
-                <span className="prob-val">{(pPneu * 100).toFixed(1)}%</span>
+                <div className="prob-bar-wrap">
+                  <span className="prob-label">Pneumonia</span>
+                  <div className="prob-bar">
+                    <div className="prob-fill pneumonia" style={{ width: `${pPneu * 100}%` }} />
+                  </div>
+                  <span className="prob-val">{(pPneu * 100).toFixed(1)}%</span>
+                </div>
               </div>
             </div>
-          </div>
-        )}
+          )}
 
-        {result?.error && (
-          <div className="error-banner">{result.error}</div>
-        )}
+          {result?.error && (
+            <div className="error-banner">{result.error}</div>
+          )}
+        </div>
       </div>
-    </div>
+
+      {/* Sample Images Section */}
+      <div className="sample-section">
+        <p className="sample-hint">
+          Don't have a chest X-ray image? Try one of the sample test images below to see how the models perform.
+        </p>
+        <div className="sample-grid">
+          {SAMPLES.map(s => (
+            <div
+              key={s.id}
+              className={`sample-card${activeSample === s.id ? ' active' : ''}`}
+              onClick={() => handleSample(s)}
+            >
+              <img src={s.src} alt={s.name} className="sample-thumb" />
+              <span className="sample-name">{s.name}</span>
+              <span className={`sample-label ${s.label === 'NORMAL' ? 'normal' : 'pneumonia'}`}>
+                Correct label: {s.label}
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </>
   );
 }
 
