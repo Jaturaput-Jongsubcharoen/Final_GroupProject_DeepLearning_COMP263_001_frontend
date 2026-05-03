@@ -41,7 +41,7 @@ function App() {
     <div className="app">
       <header className="header">
         <h1>Deep Learning for Pneumonia Detection from Chest X-Ray Images</h1>
-        <p className="subtitle">COMP263 — Final Group Project</p>
+        <p className="subtitle">Deep Learning - Individual Project</p>
       </header>
 
       <main className="container">
@@ -73,7 +73,7 @@ function App() {
       </main>
 
       <footer className="footer">
-        <p>COMP263 Deep Learning — Centennial College — 2025</p>
+        <p>Deep Learning - Centennial College - 2026</p>
       </footer>
     </div>
   );
